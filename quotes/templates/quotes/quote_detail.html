@@ -153,7 +153,7 @@
             border-radius: 8px;
             cursor: pointer;
         }
-        .fiter button:hover {
+        .filter button:hover {
             background-color: #27ae60;
             transition: background-color 0.3s;
         }
@@ -229,18 +229,17 @@
                     const likeButtonText = document.getElementById(`like-button-text-${quoteId}`);
                     const likeCount = document.getElementById(`like-count-${quoteId}`);
                     likeButtonText.textContent = data.liked ? 'Unlike' : 'Like';
-                    likeCount.textContent = data.liked ? parseInt(likeCount.textContent) + 1 : parseInt(likeCount.textContent) - 1;
+                    likeCount.textContent = data.like_count;
                 });
         }
 
-        const commentForm = document.getElementById('comment-form');
+        const commentForm = document.getElementById(`comment-form-{{ quote.id }}`);
         commentForm.addEventListener('submit', (event) => {
             event.preventDefault();
-
+            const quoteId = {{ quote.id }};
             const commentText = commentForm.querySelector('[name=comment_text]').value;
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-            fetch('/comment/{{ quote.id }}/', {
+            fetch('/comment/' + quoteId + '/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -248,22 +247,28 @@
                 },
                 body: 'comment_text=' + commentText
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok.');
-                }
-                return response.text();
-            })
-            .then(newCommentHtml => {
-                const commentsList = document.getElementById('comments-list');
-                commentsList.innerHTML += newCommentHtml;
-                commentForm.reset();
-            })
-            .catch(error => {
-                console.error('Error adding comment:', error);
-
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        console.error(data.error);
+                        return;
+                    }
+                    const commentsList = document.getElementById(`comments-list-${quoteId}`); // Get list by ID
+                    commentsList.innerHTML += data.html;
+                    commentForm.reset();
+                })
+                .catch(error => {
+                    console.error('Error adding comment:', error);
+                });
         });
+        {% if quote %}
+            likeQuote({{ quote.id }});
+        {% endif %}
     </script>
 </body>
 </html>

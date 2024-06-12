@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
+from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 from .models import Quote, Like, Comment
 from rest_framework import viewsets
@@ -38,8 +39,13 @@ def like_quote(request, quote_id):
         like, created = Like.objects.get_or_create(user=user, quote=quote)
         if not created:
             like.delete()
+            liked = False  # Indicate that the quote was unliked
+        else:
+            liked = True  # Indicate that the quote was liked
+    else:
+        liked = False  # For unauthenticated users
 
-    return JsonResponse({'liked': created})
+    return JsonResponse({'liked': liked, 'like_count': quote.like_set.count()})
 
 
 @require_POST
@@ -49,9 +55,14 @@ def add_comment(request, quote_id):
 
     comment_text = request.POST.get('comment_text')
     if comment_text:
-        Comment.objects.create(user=user, quote=quote, text=comment_text)
+        comment = Comment.objects.create(user=user, quote=quote, text=comment_text)
 
-    return redirect('quote_detail', pk=quote_id)
+        # Render the new comment as HTML
+        html = render_to_string('quotes/comment_item.html', {'comment': comment})
+
+        return JsonResponse({'html': html})
+    else:
+        return JsonResponse({'error': 'Comment text is required'}, status=400)
 
 
 def quote_detail(request, quote_id):

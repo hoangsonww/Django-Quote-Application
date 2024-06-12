@@ -90,11 +90,11 @@
         <p>{{ quotes.count }} results found for "{{ query }}".</p>
         <ul>
             {% for quote in quotes %}
-                <li>
-                    <a href="{% url 'quote_detail' quote.id %}">
-                        {{ quote.text }} - {{ quote.author }}
-                    </a>
-                </li>
+                <a href="{% url 'quote_detail' quote.id %}">
+                    <li>
+                            {{ quote.text }} - {{ quote.author }}
+                    </li>
+                </a>
             {% endfor %}
         </ul>
     {% else %}

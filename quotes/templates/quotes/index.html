@@ -152,7 +152,7 @@
             border-radius: 8px;
             cursor: pointer;
         }
-        .fiter button:hover {
+        .filter button:hover {
             background-color: #27ae60;
             transition: background-color 0.3s;
         }
@@ -248,22 +248,30 @@
                 },
                 body: 'comment_text=' + commentText
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok.');
-                }
-                return response.text();
-            })
-            .then(newCommentHtml => {
-                const commentsList = document.getElementById('comments-list');
-                commentsList.innerHTML += newCommentHtml;
-                commentForm.reset();
-            })
-            .catch(error => {
-                console.error('Error adding comment:', error);
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        console.error(data.error);
+                        return;
+                    }
 
-            });
+                    const commentsList = document.getElementById('comments-list');
+                    commentsList.innerHTML += data.html;
+                    commentForm.reset();
+                })
+                .catch(error => {
+                    console.error('Error adding comment:', error);
+                });
         });
+
+        {% if quote %}
+            likeQuote({{ quote.id }});
+        {% endif %}
     </script>
 </body>
 <footer>
