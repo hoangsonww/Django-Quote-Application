@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ category_name }} Quotes</title>
+    <link rel="icon" type="image/x-icon" href="../../static/images/favicon.ico">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #2ecc71;
+            text-align: center;
+            padding: 1em;
+            width: 80%;
+            max-width: 700px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+        }
+
+        .quote {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #2980b9;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-top: 0;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        button {
+            background-color: #2ecc71;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1em;
+        }
+
+        button:hover {
+            transition: background-color 0.3s;
+            background-color: #27ae60;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li {
+            text-align: left;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+        }
+
+        textarea, button[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            border-radius: 8px;
+            font: inherit;
+            min-height: 100px;
+        }
+
+        h3 {
+            margin-top: 30px;
+            color: #34495e;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1em;
+            margin-top: 20px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 style="color: white; margin-top: 0">{{ category_name }} Quotes</h1>
+    </header>
+
+    <div class="quote">
+        {% if quotes %}
+            <ul>
+                {% for quote in quotes %}
+                    <li>
+                        "{{ quote.text }}" - {{ quote.author }}
+                        <button onclick="likeQuote({{ quote.id }})">
+                            <span id="like-button-text-{{ quote.id }}">
+                                {% if request.user in quote.like_set.all %}
+                                    Unlike
+                                {% else %}
+                                    Like
+                                {% endif %}
+                            </span>
+                        </button>
+                        <p>Likes: <span id="like-count-{{ quote.id }}">{{ quote.like_set.count }}</span></p>
+
+                        <h3>Comments</h3>
+                        <ul id="comments-list-{{ quote.id }}">
+                            {% for comment in quote.comment_set.all %}
+                                <li>{{ comment.user.username }} - {{ comment.text }}</li>
+                            {% endfor %}
+                        </ul>
+                        <form id="comment-form-{{ quote.id }}">
+                            {% csrf_token %}
+                            <textarea id="comment_text" name="comment_text" placeholder="Add your comment"></textarea>
+                            <button type="submit">Submit</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No quotes found in this category.</p>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'index' %}">
+        <button id="back-to-home">Back to Home</button>
+    </a>
+
+    <footer>
+        <p>&copy; 2024 The Django Quote App - By <a style="color: inherit" href="https://github.com/hoangsonww">Son Nguyen</a></p>
+    </footer>
+
+     <script>
+        function likeQuote(quoteId) {
+            fetch('/like/' + quoteId + '/')
+                .then(response => response.json())
+                .then(data => {
+                    const likeButtonText = document.getElementById(`like-button-text-${quoteId}`);
+                    const likeCount = document.getElementById(`like-count-${quoteId}`);
+                    likeButtonText.textContent = data.liked ? 'Unlike' : 'Like';
+                    likeCount.textContent = data.liked ? parseInt(likeCount.textContent) + 1 : parseInt(likeCount.textContent) - 1;
+                });
+        }
+
+        const commentForms = document.querySelectorAll('[id^=comment-form-]');
+        commentForms.forEach(commentForm => {
+            commentForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const quoteId = commentForm.id.split('-')[2];
+                const commentText = commentForm.querySelector('[name=comment_text]').value;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                fetch('/comment/' + quoteId + '/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: 'comment_text=' + commentText
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+                    return response.text();
+                })
+                .then(newCommentHtml => {
+                    const commentsList = document.getElementById(`comments-list-${quoteId}`);
+                    commentsList.innerHTML += newCommentHtml;
+                    commentForm.reset();
+                })
+                .catch(error => {
+                    console.error('Error adding comment:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Quote of the Day</title>
+    <link rel="icon" type="image/x-icon" href="../../static/images/favicon.ico">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #2ecc71;
+            text-align: center;
+            padding: 1em;
+            width: 80%;
+            max-width: 700px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            margin-top: 20px;
+        }
+
+        .quote {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #2980b9;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-top: 0;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .search {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 700px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px 0 0 5px;
+            margin-right: -1px;
+            min-width: 80%;
+        }
+
+        .search-bar button {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+
+        .search-bar button:hover {
+            background-color: #27ae60;
+            transition: background-color 0.3s;
+        }
+
+        button {
+            background-color: #2ecc71;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+            transition: background-color 0.3s;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li {
+            text-align: left;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+        }
+
+        textarea, button[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        h3 {
+            margin-top: 30px;
+            color: #34495e;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1em;
+            margin-top: 20px;
+            color: #7f8c8d;
+        }
+
+        .filter {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        .filter-select {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .filter select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .filter button {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .fiter button:hover {
+            background-color: #27ae60;
+            transition: background-color 0.3s;
+        }
+
+        h3 {
+            margin: 10px 0;
+        }
+
+        .quote h1 {
+            font-size: 2em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 style="color: white; margin-top: 0">Quote of the Day</h1>
+    </header>
+
+    <div class="quote">
+        {% if quote %}
+            <h1>{{ quote.text }}</h1>
+            <p>- By {{ quote.author }}</p>
+            <p style="font-style: normal">Category: {{ quote.get_category_display }}</p>
+            <button onclick="likeQuote({{ quote.id }})">
+                <span id="like-button-text-{{ quote.id }}">
+                    {% if request.user in quote.like_set.all %}
+                        Unlike
+                    {% else %}
+                        Like
+                    {% endif %}
+                </span>
+            </button>
+            <p style="margin-top: 10px; font-style: normal">Likes: <span id="like-count-{{ quote.id }}">{{ quote.like_set.count }}</span></p>
+
+            <h3>Comments</h3>
+            <ul id="comments-list">
+                {% for comment in quote.comment_set.all %}
+                    <li>{{ comment.user.username }} - {{ comment.text }}</li>
+                {% endfor %}
+            </ul>
+
+            <form id="comment-form">
+                {% csrf_token %}
+                <label for="comment_text">Add your comment</label>
+                <textarea id="comment_text" name="comment_text" placeholder="Add your comment"></textarea>
+                <button type="submit">Submit</button>
+            </form>
+
+            {% else %}
+            <p>No quotes available.</p>
+        {% endif %}
+        <h5><em>Note: Only logged-in administrative users can create quotes.</em></h5>
+    </div>
+
+    <div class="search">
+        <h3>Search for quotes:</h3>
+        <form class="search-bar" method="GET" action="{% url 'search' %}">
+            <input type="text" name="query" placeholder="Search for quotes...">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <div class="filter">
+        <h3>View quotes by category:</h3>
+        <form method="GET" action="{% url 'category' 'Inspirational' %}">
+            <select name="category" onchange="this.form.action = '{% url 'category' 'replace_me' %}'.replace('replace_me', this.value)">
+                {% for category, _ in quote.CATEGORY_CHOICES %}
+                    <option value="{{ category }}"
+                            {% if category == request.GET.category %}selected{% endif %}>
+                        {{ category }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit">Filter</button>
+        </form>
+    </div>
+
+    <script>
+        function likeQuote(quoteId) {
+            fetch('/like/' + quoteId + '/')
+                .then(response => response.json())
+                .then(data => {
+                    const likeButtonText = document.getElementById(`like-button-text-${quoteId}`);
+                    const likeCount = document.getElementById(`like-count-${quoteId}`);
+                    likeButtonText.textContent = data.liked ? 'Unlike' : 'Like';
+                    likeCount.textContent = data.liked ? parseInt(likeCount.textContent) + 1 : parseInt(likeCount.textContent) - 1;
+                });
+        }
+
+        const commentForm = document.getElementById('comment-form');
+        commentForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const commentText = commentForm.querySelector('[name=comment_text]').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch('/comment/{{ quote.id }}/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: 'comment_text=' + commentText
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok.');
+                }
+                return response.text();
+            })
+            .then(newCommentHtml => {
+                const commentsList = document.getElementById('comments-list');
+                commentsList.innerHTML += newCommentHtml;
+                commentForm.reset();
+            })
+            .catch(error => {
+                console.error('Error adding comment:', error);
+
+            });
+        });
+    </script>
+</body>
+
+<footer>
+    <p>&copy; 2024 The Django Quote App - By <a style="color: inherit" href="https://github.com/hoangsonww">Son Nguyen</a></p>
+</footer>
+
+</html>

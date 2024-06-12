@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+    <link rel="icon" type="image/x-icon" href="../../static/images/favicon.ico">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #2980b9;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-top: 0;
+            color: #7f8c8d;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        li {
+            text-align: left;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+        }
+
+        li:hover {
+            background-color: #3498db;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        header {
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 1em;
+            width: 80%;
+            max-width: 700px;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1em;
+            margin-top: 20px;
+            color: #7f8c8d;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transition: background-color 0.3s;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Search Results</h1>
+
+    {% if query %}
+        <p>{{ quotes.count }} results found for "{{ query }}".</p>
+        <ul>
+            {% for quote in quotes %}
+                <li>
+                    <a href="{% url 'quote_detail' quote.id %}">
+                        {{ quote.text }} - {{ quote.author }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Please enter a search query.</p>
+    {% endif %}
+
+    <a href="{% url 'index' %}">
+        <button id="back-to-home">Back to Home</button>
+    </a>
+
+    <footer>
+        <p>&copy; 2024 The Django Quote App - By <a style="color: inherit" href="https://github.com/hoangsonww">Son Nguyen</a></p>
+    </footer>
+</body>
+
+</html>
