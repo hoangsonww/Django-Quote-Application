@@ -121,6 +121,13 @@ The project consists of the following main components:
     # Create quotes and add them to different categories
     # Go to the homepage to see the quotes (http://127.0.0.1:8000/)
     ```
+   
+**Important**: Remember to change the Django production secret key and set `DEBUG` to `True` in `QuotesApp/settings.py` order to run the server:
+```python
+SECRET_KEY = 'your_secret_key'
+
+DEBUG = True
+```
 
 ## User Guide
 
