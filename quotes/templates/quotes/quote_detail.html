@@ -16,7 +16,6 @@
             min-height: 100vh;
             flex-direction: column;
         }
-
         header {
             background-color: #2ecc71;
             text-align: center;
@@ -27,7 +26,6 @@
             border-radius: 16px;
             margin-top: 20px;
         }
-
         .quote {
             background-color: #fff;
             padding: 40px;
@@ -37,20 +35,17 @@
             width: 80%;
             max-width: 700px;
         }
-
         h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
             color: #2980b9;
         }
-
         p {
             font-size: 1.2em;
             margin-top: 0;
             color: #7f8c8d;
             font-style: italic;
         }
-
         .search {
             background-color: #fff;
             padding: 20px;
@@ -61,12 +56,10 @@
             margin: 20px;
             text-align: center;
         }
-
         .search-bar {
             display: flex;
             align-items: center;
         }
-
         .search-bar input[type="text"] {
             flex-grow: 1;
             padding: 10px;
@@ -75,7 +68,6 @@
             margin-right: -1px;
             min-width: 80%;
         }
-
         .search-bar button {
             background-color: #2ecc71;
             color: white;
@@ -84,12 +76,10 @@
             border-radius: 0 5px 5px 0;
             cursor: pointer;
         }
-
         .search-bar button:hover {
             background-color: #2980b9;
             transition: background-color 0.3s;
         }
-
         button {
             background-color: #2ecc71;
             color: #fff;
@@ -100,18 +90,15 @@
             margin-top: 20px;
             font-size: 1em;
         }
-
         button:hover {
             background-color: #27ae60;
             transition: background-color 0.3s;
         }
-
         ul {
             list-style: none;
             padding: 0;
             margin-top: 20px;
         }
-
         li {
             text-align: left;
             margin-bottom: 10px;
@@ -119,7 +106,6 @@
             background-color: #ecf0f1;
             border-radius: 8px;
         }
-
         textarea, button[type="submit"] {
             display: block;
             width: 100%;
@@ -129,26 +115,22 @@
             border-radius: 5px;
             box-sizing: border-box;
         }
-
         textarea {
             resize: vertical;
             min-height: 100px;
             border-radius: 8px;
             font: inherit;
         }
-
         h3 {
             margin-top: 30px;
             color: #34495e;
         }
-
         footer {
             text-align: center;
             padding: 1em;
             margin-top: 20px;
             color: #7f8c8d;
         }
-
         .filter {
             background-color: #fff;
             padding: 20px;
@@ -158,18 +140,11 @@
             max-width: 700px;
             text-align: center;
         }
-
-        .filter-select {
-            display: inline-block;
-            margin-right: 10px;
-        }
-
         .filter select {
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 8px;
         }
-
         .filter button {
             background-color: #2ecc71;
             color: white;
@@ -178,7 +153,6 @@
             border-radius: 8px;
             cursor: pointer;
         }
-
         .fiter button:hover {
             background-color: #27ae60;
             transition: background-color 0.3s;
@@ -189,13 +163,11 @@
     <header>
         <h1 style="color: white; margin-top: 0">Quote Detail</h1>
     </header>
-
     <div class="quote">
         {% if quote %}
             <h1>{{ quote.text }}</h1>
             <p>- By {{ quote.author }}</p>
             <p style="font-style: normal">Category: {{ quote.get_category_display }}</p>
-
             <button onclick="likeQuote({{ quote.id }})">
                 <span id="like-button-text-{{ quote.id }}">
                     {% if request.user in quote.like_set.all %}
@@ -206,14 +178,12 @@
                 </span>
             </button>
             <p style="margin-top: 10px; font-style: normal">Likes: <span id="like-count-{{ quote.id }}">{{ quote.like_set.count }}</span></p>
-
             <h3>Comments</h3>
             <ul id="comments-list-{{ quote.id }}">
                 {% for comment in quote.comment_set.all %}
                     <li>{{ comment.user.username }} - {{ comment.text }}</li>
                 {% endfor %}
             </ul>
-
             <form id="comment-form-{{ quote.id }}">
                 {% csrf_token %}
                 <textarea name="comment_text" placeholder="Add your comment"></textarea>
@@ -224,7 +194,6 @@
         {% endif %}
         <h5><em>Note: Only logged-in administrative users can create quotes.</em></h5>
     </div>
-
     <div class="search">
         <h3>Search for quotes:</h3>
         <form class="search-bar" method="GET" action="{% url 'search' %}">
@@ -232,7 +201,6 @@
             <button type="submit">Search</button>
         </form>
     </div>
-
     <div class="filter">
         <h3>View quotes by category:</h3>
         <form method="GET" action="{% url 'category' 'Inspirational' %}">
@@ -247,15 +215,12 @@
             <button type="submit">Filter</button>
         </form>
     </div>
-
     <a href="{% url 'index' %}">
         <button id="back-to-home">Back to Home</button>
     </a>
-
     <footer>
         <p>&copy; 2024 The Django Quote App - By <a style="color: inherit" href="https://github.com/hoangsonww">Son Nguyen</a></p>
     </footer>
-
     <script>
         function likeQuote(quoteId) {
             fetch('/like/' + quoteId + '/')

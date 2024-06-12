@@ -16,7 +16,6 @@
             min-height: 100vh;
             flex-direction: column;
         }
-
         header {
             background-color: #2ecc71;
             text-align: center;
@@ -26,7 +25,6 @@
             margin-bottom: 20px;
             border-radius: 16px;
         }
-
         .quote {
             background-color: #fff;
             padding: 40px;
@@ -36,20 +34,17 @@
             width: 80%;
             max-width: 700px;
         }
-
         h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
             color: #2980b9;
         }
-
         p {
             font-size: 1.2em;
             margin-top: 0;
             color: #7f8c8d;
             font-style: italic;
         }
-
         button {
             background-color: #2ecc71;
             color: #fff;
@@ -60,18 +55,15 @@
             margin-top: 20px;
             font-size: 1em;
         }
-
         button:hover {
             transition: background-color 0.3s;
             background-color: #27ae60;
         }
-
         ul {
             list-style: none;
             padding: 0;
             margin-top: 20px;
         }
-
         li {
             text-align: left;
             margin-bottom: 10px;
@@ -79,7 +71,6 @@
             background-color: #ecf0f1;
             border-radius: 8px;
         }
-
         textarea, button[type="submit"] {
             display: block;
             width: 100%;
@@ -89,19 +80,16 @@
             border-radius: 5px;
             box-sizing: border-box;
         }
-
         textarea {
             resize: vertical;
             border-radius: 8px;
             font: inherit;
             min-height: 100px;
         }
-
         h3 {
             margin-top: 30px;
             color: #34495e;
         }
-
         footer {
             text-align: center;
             padding: 1em;
@@ -114,7 +102,6 @@
     <header>
         <h1 style="color: white; margin-top: 0">{{ category_name }} Quotes</h1>
     </header>
-
     <div class="quote">
         {% if quotes %}
             <ul>
@@ -131,7 +118,6 @@
                             </span>
                         </button>
                         <p>Likes: <span id="like-count-{{ quote.id }}">{{ quote.like_set.count }}</span></p>
-
                         <h3>Comments</h3>
                         <ul id="comments-list-{{ quote.id }}">
                             {% for comment in quote.comment_set.all %}
@@ -150,15 +136,12 @@
             <p>No quotes found in this category.</p>
         {% endif %}
     </div>
-
     <a href="{% url 'index' %}">
         <button id="back-to-home">Back to Home</button>
     </a>
-
     <footer>
         <p>&copy; 2024 The Django Quote App - By <a style="color: inherit" href="https://github.com/hoangsonww">Son Nguyen</a></p>
     </footer>
-
      <script>
         function likeQuote(quoteId) {
             fetch('/like/' + quoteId + '/')
