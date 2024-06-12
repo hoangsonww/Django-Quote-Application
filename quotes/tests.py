@@ -1,7 +1,8 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from .models import Quote, Like, Comment
 from django.contrib.auth.models import User
+
+from .models import Quote, Like, Comment
 
 
 class QuoteTestCase(TestCase):
