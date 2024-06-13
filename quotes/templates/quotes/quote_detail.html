@@ -168,27 +168,32 @@
             <h1>{{ quote.text }}</h1>
             <p>- By {{ quote.author }}</p>
             <p style="font-style: normal">Category: {{ quote.get_category_display }}</p>
-            <button onclick="likeQuote({{ quote.id }})">
-                <span id="like-button-text-{{ quote.id }}">
-                    {% if request.user in quote.like_set.all %}
-                        Unlike
-                    {% else %}
-                        Like
-                    {% endif %}
-                </span>
-            </button>
-            <p style="margin-top: 10px; font-style: normal">Likes: <span id="like-count-{{ quote.id }}">{{ quote.like_set.count }}</span></p>
-            <h3>Comments</h3>
-            <ul id="comments-list-{{ quote.id }}">
-                {% for comment in quote.comment_set.all %}
-                    {% include 'quotes/comment_item.html' %}
-                {% endfor %}
-            </ul>
-            <form id="comment-form-{{ quote.id }}">
-                {% csrf_token %}
-                <textarea name="comment_text" placeholder="Add your comment"></textarea>
-                <button type="submit">Submit</button>
-            </form>
+            {% if user.is_authenticated %}
+                <button onclick="likeQuote({{ quote.id }})">
+                    <span id="like-button-text-{{ quote.id }}">
+                        {% if request.user in quote.like_set.all %}
+                            Unlike
+                        {% else %}
+                            Like
+                        {% endif %}
+                    </span>
+                </button>
+                <p style="margin-top: 10px; font-style: normal">Likes: <span id="like-count-{{ quote.id }}">{{ quote.like_set.count }}</span></p>
+                <h3>Comments</h3>
+                <ul id="comments-list-{{ quote.id }}">
+                    {% for comment in quote.comment_set.all %}
+                        {% include 'quotes/comment_item.html' %}
+                    {% endfor %}
+                </ul>
+
+                <form id="comment-form-{{ quote.id }}">
+                    {% csrf_token %}
+                    <textarea name="comment_text" placeholder="Add your comment"></textarea>
+                    <button type="submit">Submit</button>
+                </form>
+            {% else %}
+                <p>Please <a style="color: inherit" href="{% url 'admin:index' %}">log in</a> to like and comment.</p>
+            {% endif %}
         {% else %}
             <p>Quote not found.</p>
         {% endif %}
