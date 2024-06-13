@@ -181,7 +181,7 @@
             <h3>Comments</h3>
             <ul id="comments-list-{{ quote.id }}">
                 {% for comment in quote.comment_set.all %}
-                    <li>{{ comment.user.username }} - {{ comment.text }}</li>
+                    {% include 'quotes/comment_item.html' %}
                 {% endfor %}
             </ul>
             <form id="comment-form-{{ quote.id }}">
@@ -192,7 +192,7 @@
         {% else %}
             <p>Quote not found.</p>
         {% endif %}
-        <h5><em>Note: Only logged-in administrative users can create quotes.</em></h5>
+        <h5><em>Note: Only logged-in administrative users can create quotes. Only authenticated users can like and comment on quotes.</em></h5>
     </div>
     <div class="search">
         <h3>Search for quotes:</h3>

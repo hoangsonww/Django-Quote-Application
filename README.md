@@ -49,6 +49,8 @@ This is a Django-powered web application that displays inspirational quotes, all
 *   **Admin Interface:** Add, update, and delete quotes using our admin interface.
 *   **REST API:** Interact with quotes programmatically using our API endpoints.
 
+**Note:** Only authenticated users can like and comment on quotes. You can create a superuser account using the Django admin interface or use the admin interface to create user accounts to test these features.
+
 ## Project Structure
 
 The project consists of the following main components:
