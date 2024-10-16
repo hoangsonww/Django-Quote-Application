@@ -1,6 +1,6 @@
 # The Django Quotes App
 
-This is a Django-powered web application that displays inspirational quotes, allows users to like, comment, and search for quotes. It includes a user interface for viewing quotes, an admin interface for managing quotes, and a REST API using Django REST Framework for interacting with quotes programmatically.
+This is a simple Django-powered web application that displays inspirational quotes, allows users to like, comment, and search for quotes. It includes a user interface for viewing quotes, an admin interface for managing quotes, and a REST API using Django REST Framework for interacting with quotes programmatically.
 
 ## Table of Contents
 - [User Interface](#user-interface)
